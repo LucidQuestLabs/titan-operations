@@ -49,3 +49,19 @@ Human-readable lineage for consequential changes. Git remains code-level history
 - **Verification:** Artifact 03 v0.2 disposition is `RC0 VERIFIED — READY FOR OWNER REVIEW PACKET`; verified implementation commit `be92bd1750c94dfdf2fe5be7163c225bbf43e11f`; external Artifact 03 SHA-256 `4851089C436C2A21966045EE0E5E20A5267A46C034E0FBA431969EC6ACE12947`
 - **Commit:** this final verification checkpoint
 - **Status:** verified
+
+### 2026-08-19 — Deploy and verify RC0 Netlify Masked Demo preview
+
+- **Change class:** deployment-mechanics and governance-verification
+- **Authority/source:** Artifact 05; Titan RC0 Netlify Hosted Preview Deployment Master Prompt; Hosted Verification Recovery Prompt
+- **Reason:** Create a distinct Netlify-hosted candidate, preserve the Masked Demo exposure boundary, and complete the governed hosted-equivalence gate before any owner sharing.
+- **Affected areas:** static hosted-data adapter and manifest; Netlify build/routing/security headers; hosted-mode lock; due-date provenance masking; hosted regression coverage; pnpm dependency-build allowlist; deployment verification documentation
+- **Behavioral impact:** hosting mechanics only. The Netlify build reads the committed Masked Demo derivative, has no Internal Data path, and fails closed when the derivative is unavailable. No product or business semantics changed.
+- **Truth/governance impact:** none. The workbook remains external and unchanged; blocked rules remain blocked; proposed rules remain review-mode; the derivative remains non-authoritative.
+- **Hosted data:** source SHA-256 `E3D9522382A2BDC05A96BC3370D4886351D7180DE2DA864961C0534BD57B33A0`; derivative SHA-256 `6d5c2757aa289fb1049f03e5446dfd094138af108b33468ce4b447e318172444`; 1,716 qualified records; 7 review records; 523 proposed findings; 0 blocked-rule findings; 0 actionable protected-value leaks.
+- **Netlify identity:** project `titan-operations-rc0-preview`; site `260250b5-9dcf-46b9-a891-55ac9887ada5`; deploy `6a85e9e75a10c20008271457`; context `production`; branch `rc0/netlify-owner-preview`.
+- **Verification infrastructure:** two stopped passes identified harness-only defects (React controlled-input injection and an incorrect page-specific text assertion). The final single pass used real Chromium text insertion and page-correct assertions. No product change was made for either harness correction.
+- **Verification:** 71/71 local tests, typecheck, configured lint, server compile, hosted build, deterministic regeneration, unchanged workbook hash, exact hosted derivative hash, complete rendered owner flow, deep links/refresh/query state, keyboard/modal behavior, fail-closed loading, no source maps, no console errors, and a single-origin network boundary all passed.
+- **Artifact 06:** external artifact `06_RC0_HOSTED_PREVIEW_VERIFICATION.md`; SHA-256 `781F877AD293AE77C8AE0316777AC0C979FC97491733FCF167408834C7B10409`; disposition `RC0 HOSTED PREVIEW VERIFIED — READY FOR CONTROLLED OWNER SHARING`, limited to Masked Demo.
+- **Deployment commits:** `fe21d60e15993d663a5e4e54dc13146cbed30e4e`, `5635d13d9cafba4b0152468a6a5fc3b470b350b0`
+- **Status:** verified
