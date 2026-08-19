@@ -49,3 +49,18 @@ Human-readable lineage for consequential changes. Git remains code-level history
 - **Verification:** Artifact 03 v0.2 disposition is `RC0 VERIFIED — READY FOR OWNER REVIEW PACKET`; verified implementation commit `be92bd1750c94dfdf2fe5be7163c225bbf43e11f`; external Artifact 03 SHA-256 `4851089C436C2A21966045EE0E5E20A5267A46C034E0FBA431969EC6ACE12947`
 - **Commit:** this final verification checkpoint
 - **Status:** verified
+
+### 2026-08-19 — Freeze verified RC0 and authorize hosted-preview adaptation
+
+- **Change class:** governance-control
+- **Authority/source:** `05_RC0_CODE_FREEZE_AND_DEPLOYMENT_AUTHORIZATION.md`; verified Artifact 03 v0.2; Artifact 04 owner-review packet
+- **Reason:** Freeze the exact verified local owner-review candidate before any hosting adaptation and define the bounded path to a separately verified hosted preview.
+- **Freeze commit:** `f20c39000830a44905c6afa31969d9c8610d9558`
+- **Tag:** annotated `rc0-owner-review-verified`, message `Titan Operations RC0 verified owner-review baseline`; local and remote tags peel to the freeze commit
+- **Deployment branch authorization:** `rc0/netlify-owner-preview`, from the frozen tag, for deployment adaptation only
+- **Execution state:** tag created and pushed; Artifact 05 created; deployment branch not created; no deployment performed; Artifact 06 not created
+- **Behavioral impact:** none; no application, data, rule, masking, query, workflow, or UI behavior changed
+- **Truth/governance impact:** no unresolved semantic is promoted; hosted preview must default to Masked Demo unless Titan-only access protection is configured and verified
+- **Required future gate:** `06_RC0_HOSTED_PREVIEW_VERIFICATION.md` must pass before a hosted URL is shared
+- **Commit:** this governance/document-control checkpoint
+- **Status:** freeze verified; deployment adaptation authorized but not started
