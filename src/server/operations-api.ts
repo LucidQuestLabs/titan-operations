@@ -1,5 +1,12 @@
 import { importWorkbookReadOnly } from "../import/index.js";
-import { buildPresentationDto, maskPresentationDtos, type LoadedMaskProfile, type OperationsPresentationDto } from "../masking/index.js";
+import {
+  buildPresentationDto,
+  maskPresentationDtos,
+  summarizePresentationJobs,
+  type DistributionEntry,
+  type LoadedMaskProfile,
+  type OperationsPresentationDto,
+} from "../masking/index.js";
 import { evaluateJobRules, operationalFindings, RULE_DEFINITIONS } from "../rules/index.js";
 
 export interface OperationsApiResponse {
@@ -20,6 +27,10 @@ export interface OperationsApiResponse {
     readonly findingsByRule: Readonly<Record<string, number>>;
     readonly statusDistribution: Readonly<Record<string, number>>;
     readonly presenceReviewCount: number;
+    readonly jobsWithMetricReviewCount: number;
+    readonly deliveryDistribution: readonly DistributionEntry[];
+    readonly buyoutDistribution: readonly DistributionEntry[];
+    readonly metricPresenceDistribution: readonly DistributionEntry[];
   };
 }
 
@@ -52,7 +63,7 @@ export async function createOperationsApiResponse(
     const status = String(job.status.display ?? "Blank in source");
     statusDistribution[status] = (statusDistribution[status] ?? 0) + 1;
   }
-  const presenceReviewCount = jobs.reduce((count, job) => count + Object.values(job.metrics).filter((metric) => metric.presence !== "VALUE").length, 0);
+  const sourceSummary = summarizePresentationJobs(jobs);
   return Object.freeze({
     mode,
     snapshot: {
@@ -67,6 +78,6 @@ export async function createOperationsApiResponse(
     jobs,
     rules: RULE_DEFINITIONS,
     reviewLedger: imported.snapshot.reviewLedger.filter((entry) => entry.classification !== "EMPTY").map(({ sheetName, rowNumber, classification, reasons }) => ({ sheetName, rowNumber, classification, reasons })),
-    summary: { findingsByRule, statusDistribution, presenceReviewCount },
+    summary: { findingsByRule, statusDistribution, ...sourceSummary },
   });
 }

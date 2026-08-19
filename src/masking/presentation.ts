@@ -46,6 +46,7 @@ export interface OperationsPresentationDto {
     readonly sheetName: string;
     readonly rowNumber: number;
     readonly fields: readonly {
+      readonly sourceCellId: string;
       readonly canonicalField: string;
       readonly address: string;
       readonly header: string | null;
@@ -68,6 +69,7 @@ export function buildPresentationDto(job: ImportedJobRelease, snapshotId: string
   const metrics = Object.fromEntries(["burn_sheets", "liner_sheets", "liner_area", "liner_size", "coil_pc_count", "coil_lbs", "optimized_pc_count", "optimized_lbs"].map((name) => [name, field(job, name)]));
   const first = Object.values(job.sourceCells)[0];
   const fields = Object.entries(job.sourceCells).map(([canonicalField, sourceCell]) => ({
+    sourceCellId: sourceCell.sourceCellId,
     canonicalField,
     address: sourceCell.ref.address,
     header: sourceCell.ref.headerRaw,

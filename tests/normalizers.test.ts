@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { ImportBatchId, SchemaEra, SourceCell, SourceCellId, SourceFileId } from "../src/contracts/index.js";
-import { candidateKey, normalizeBoolean, normalizeIdentifier, normalizeNumber } from "../src/import/index.js";
+import {
+  beginNormalizationHistory,
+  candidateKey,
+  normalizeBoolean,
+  normalizeIdentifier,
+  normalizeNumber,
+  supersedeNormalization,
+} from "../src/import/index.js";
 
 const makeCell = (rawValue: unknown, presence: SourceCell["presence"] = "VALUE"): SourceCell => ({
   sourceCellId: "cell_test" as SourceCellId,
@@ -48,5 +55,31 @@ describe("versioned normalizers", () => {
     expect(result.value).toBeNull();
     expect(result.presence).toBe("FORMULA");
   });
-});
 
+  it("preserves append-only normalization supersession history and source evidence", () => {
+    const source = makeCell(75727);
+    const first = normalizeIdentifier(source);
+    const history = beginNormalizationHistory(first);
+    const successor = Object.freeze({ ...first, normalizerVersion: "0.2.0", value: "75727" });
+    const superseded = supersedeNormalization(history, successor);
+
+    expect(history.interpretations).toHaveLength(1);
+    expect(superseded.interpretations).toHaveLength(2);
+    expect(superseded.interpretations[0]).toEqual(history.interpretations[0]);
+    expect(superseded.interpretations[1]?.supersedesInterpretationId).toBe(history.currentInterpretationId);
+    expect(superseded.currentInterpretationId).toBe(superseded.interpretations[1]?.interpretationId);
+    expect(superseded.sourceCellIds).toEqual([source.sourceCellId]);
+    expect(Object.isFrozen(superseded.interpretations)).toBe(true);
+  });
+
+  it("rejects a supersession that substitutes different source evidence", () => {
+    const first = normalizeIdentifier(makeCell(75727));
+    const history = beginNormalizationHistory(first);
+    const changedEvidence = Object.freeze({
+      ...first,
+      normalizerVersion: "0.2.0",
+      sourceCellIds: ["cell_other" as SourceCellId],
+    });
+    expect(() => supersedeNormalization(history, changedEvidence)).toThrow("cannot substitute immutable source evidence");
+  });
+});

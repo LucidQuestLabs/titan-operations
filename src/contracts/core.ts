@@ -81,6 +81,17 @@ export interface NormalizedValue<T> {
   readonly anomalies: readonly string[];
 }
 
+export interface NormalizationInterpretation<T> extends NormalizedValue<T> {
+  readonly interpretationId: string;
+  readonly supersedesInterpretationId: string | null;
+}
+
+export interface NormalizationHistory<T> {
+  readonly sourceCellIds: readonly SourceCellId[];
+  readonly currentInterpretationId: string;
+  readonly interpretations: readonly NormalizationInterpretation<T>[];
+}
+
 export type RowClassification =
   | "JOB_RECORD"
   | "REVIEW_RECORD"
@@ -123,4 +134,3 @@ export interface AuditDecision {
   readonly sourceRefs: readonly SourceCellId[];
   readonly predecessorDecisionId: string | null;
 }
-

@@ -1,9 +1,67 @@
-import type { NormalizedValue, PresenceState, SourceCell, SourceCellId } from "../contracts/index.js";
+import type {
+  NormalizationHistory,
+  NormalizationInterpretation,
+  NormalizedValue,
+  PresenceState,
+  SourceCell,
+  SourceCellId,
+} from "../contracts/index.js";
+import { stableDigest } from "./source-registration.js";
 
 const VERSION = "0.1.0";
 
 export function candidateKey(value: string): string {
   return value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+}
+
+const sameSourceEvidence = (left: readonly SourceCellId[], right: readonly SourceCellId[]): boolean =>
+  left.length === right.length && left.every((sourceCellId, index) => sourceCellId === right[index]);
+
+function interpretation<T>(
+  normalized: NormalizedValue<T>,
+  supersedesInterpretationId: string | null,
+): NormalizationInterpretation<T> {
+  const interpretationId = `normalization_${stableDigest(
+    supersedesInterpretationId ?? "origin",
+    normalized.normalizerId,
+    normalized.normalizerVersion,
+    normalized.presence,
+    JSON.stringify(normalized.value),
+    normalized.confidence,
+    ...normalized.sourceCellIds,
+    ...normalized.anomalies,
+  ).slice(0, 28)}`;
+  return Object.freeze({
+    ...normalized,
+    sourceCellIds: Object.freeze([...normalized.sourceCellIds]),
+    anomalies: Object.freeze([...normalized.anomalies]),
+    interpretationId,
+    supersedesInterpretationId,
+  });
+}
+
+export function beginNormalizationHistory<T>(normalized: NormalizedValue<T>): NormalizationHistory<T> {
+  const first = interpretation(normalized, null);
+  return Object.freeze({
+    sourceCellIds: first.sourceCellIds,
+    currentInterpretationId: first.interpretationId,
+    interpretations: Object.freeze([first]),
+  });
+}
+
+export function supersedeNormalization<T>(
+  history: NormalizationHistory<T>,
+  successor: NormalizedValue<T>,
+): NormalizationHistory<T> {
+  if (!sameSourceEvidence(history.sourceCellIds, successor.sourceCellIds)) {
+    throw new Error("Normalization supersession cannot substitute immutable source evidence.");
+  }
+  const next = interpretation(successor, history.currentInterpretationId);
+  return Object.freeze({
+    sourceCellIds: history.sourceCellIds,
+    currentInterpretationId: next.interpretationId,
+    interpretations: Object.freeze([...history.interpretations, next]),
+  });
 }
 
 export function normalizedNull<T>(presence: PresenceState, sourceCellIds: readonly SourceCellId[] = []): NormalizedValue<T> {
@@ -110,4 +168,3 @@ export function normalizeDate(cell: SourceCell): NormalizedValue<string> {
     anomalies: [],
   });
 }
-
