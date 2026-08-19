@@ -58,9 +58,10 @@ describe("deterministic fail-closed Masked Demo", () => {
   });
 
   it("redacts protected strings across the serialized presentation boundary", () => {
-    const source = dtoFor(job("leak"));
+    const source = dtoFor(job("leak", { due_date: cell("due_date", "2025-10-03") }));
     const masked = maskPresentationDtos([source], profile);
     expect(findPresentationLeaks(masked, ["Customer leak", "Project leak", "555-0100", "Sensitive note", "Internal sensitive note", "sanitized-fixture.xlsx"])).toEqual([]);
+    expect(masked[0]?.provenance.fields.find((field) => field.canonicalField === "due_date")?.rawDisplay).not.toBe(source.dueDate.display);
   });
 
   it("preserves numeric zero versus blank/NA states", () => {
@@ -75,4 +76,3 @@ describe("deterministic fail-closed Masked Demo", () => {
     expect(masked.metrics.optimized_lbs?.presence).toBe("EXPLICIT_NA");
   });
 });
-

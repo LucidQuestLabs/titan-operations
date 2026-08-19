@@ -33,12 +33,13 @@ const sensitiveFields = internalDtos.flatMap((dto) => ([
   ["phone", dto.phone.display],
   ["operationalNote", dto.operationalNote.display],
   ["officeOnlyNote", dto.officeOnlyNote.display],
+  ["dueDate", dto.dueDate.display],
   ["vendorPoComposite", dto.vendorPoComposite.display],
   ["deliveryContact", dto.deliveryContact.display],
   ["deliveryDayDate", dto.deliveryDayDate.display],
   ["enteredBy", dto.enteredBy.display],
   ...Object.values(dto.officeEvents).map((event) => ["officeEvent", event.display] as const),
-  ...dto.provenance.fields.filter((field) => ["legacy_job_number", "customer", "po", "job_name", "phone", "operational_note", "office_only_note", "vendor_po_composite", "delivery_contact", "entered_by", "delivery_day_date", "scanned", "calculated", "invoiced"].includes(field.canonicalField)).map((field) => ["provenanceRaw", field.rawDisplay] as const),
+  ...dto.provenance.fields.filter((field) => ["legacy_job_number", "customer", "po", "job_name", "phone", "operational_note", "office_only_note", "due_date", "vendor_po_composite", "delivery_contact", "entered_by", "delivery_day_date", "scanned", "calculated", "invoiced"].includes(field.canonicalField)).map((field) => ["provenanceRaw", field.rawDisplay] as const),
   ["sourceFile", dto.provenance.sourceFile],
 ] as const))
   .filter((entry) => typeof entry[1] === "string" && entry[1].trim().length >= 6)

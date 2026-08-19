@@ -39,6 +39,24 @@ REVIEW PACKET**. Artifact 03 authorizes the owner-review packet, but Artifact
 - `pnpm typecheck`
 - `pnpm lint`
 - `pnpm build`
+- `pnpm build:hosted`
+
+## Netlify owner preview
+
+The Netlify build is a static, Masked-Demo-only owner preview. It reads the
+committed derivative at `public/data/rc0-preview.json`; it never reads the
+workbook and does not receive `TITAN_RC0_WORKBOOK_PATH` or
+`TITAN_RC0_MASK_KEY`.
+
+Generate the derivative only in an authorized local session, using the exact
+governed workbook and a non-committed mask key:
+
+`pnpm generate:hosted-preview -- <authorized-workbook.xlsx>`
+
+Generation writes the hosted payload and
+`deployment/rc0-preview-data-manifest.json`. The manifest records source and
+derivative hashes, counts, rule identities, masking mode, and generation
+environment. The payload is derived preview data, not source authority.
 
 In a non-interactive verification runtime where the bundled `pnpm` wrapper
 attempts dependency reconciliation, run the already-locked local tools

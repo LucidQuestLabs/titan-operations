@@ -17,7 +17,7 @@ const field = <T>(original: PresentationField<T>, display: T | null): Presentati
   ...("normalizedDisplay" in original ? { normalizedDisplay: display } : {}),
 });
 
-const protectedFields = new Set(["legacy_job_number", "customer", "po", "job_name", "phone", "operational_note", "office_only_note", "vendor_po_composite", "delivery_contact", "entered_by", "delivery_day_date", "scanned", "calculated", "invoiced"]);
+const protectedFields = new Set(["legacy_job_number", "customer", "po", "job_name", "phone", "operational_note", "office_only_note", "due_date", "vendor_po_composite", "delivery_contact", "entered_by", "delivery_day_date", "scanned", "calculated", "invoiced"]);
 
 function aliases(dtos: readonly OperationsPresentationDto[], profile: LoadedMaskProfile, objectType: string, ids: readonly string[]): ReadonlyMap<string, number> {
   const unique = [...new Set(ids.filter(Boolean))];
@@ -78,6 +78,7 @@ export function maskPresentationDtos(
       ["phone", dto.phone.presence === "VALUE" ? `(000) 000-${String(phoneDigits).padStart(4, "0")}` : null],
       ["operational_note", dto.operationalNote.presence === "VALUE" ? "[REDACTED IN DEMO]" : null],
       ["office_only_note", dto.officeOnlyNote.presence === "VALUE" ? "[OFFICE NOTE REDACTED]" : null],
+      ["due_date", dto.dueDate.presence === "VALUE" ? shiftedDate ?? "[DATE REDACTED - UNPARSED]" : null],
       ["vendor_po_composite", dto.vendorPoComposite.presence === "VALUE" ? `Vendor ${String(vendorOrdinal).padStart(3, "0")} / Vendor PO ${String(vendorOrdinal).padStart(3, "0")}` : null],
       ["delivery_contact", dto.deliveryContact.presence === "VALUE" ? `Contact ${String(contactOrdinal).padStart(3, "0")}` : null],
       ["entered_by", dto.enteredBy.presence === "VALUE" ? `Staff ${String(staffOrdinal).padStart(3, "0")}` : null],
