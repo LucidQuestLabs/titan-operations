@@ -27,10 +27,11 @@ not stored in Git; spreadsheet formats are ignored by repository policy.
 
 ## RC0 status
 
-The checkpoint at `50f35ca` preserves the candidate whose Artifact 03
-disposition is **RC0 VERIFICATION BLOCKED**. Remediation is limited to the
-recorded Artifact 03 gaps. No owner-review readiness is claimed until the full
-verification is rerun and Artifact 03 explicitly authorizes the next packet.
+The checkpoint at `50f35ca` preserves the originally blocked candidate. The
+remediated candidate at `be92bd1750c94dfdf2fe5be7163c225bbf43e11f` passed the
+full Artifact 03 v0.2 rerun with disposition **RC0 VERIFIED — READY FOR OWNER
+REVIEW PACKET**. Artifact 03 authorizes the owner-review packet, but Artifact
+04 is intentionally not created by this remediation run.
 
 ## Commands
 
